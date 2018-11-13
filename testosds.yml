@@ -1,0 +1,4 @@
+iosd_scenario: collocated 
+
+osd_auto_discovery: true 
+

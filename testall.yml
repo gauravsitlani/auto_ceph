@@ -1,0 +1,7 @@
+public_network: 192.168.122.0/24
+monitor_interface: eth0
+ceph_origin: repository
+ceph_repository: rhcs
+ceph_repository_type: cdn
+ceph_rhcs_version: 3
+

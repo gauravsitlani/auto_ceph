@@ -4,39 +4,62 @@ import os
 # The user should enable password-less ssh from the admin node
 def subscription():
     print("Adding a subscription ")
-    #subprocess.call(["subscription-manager","register"])
-    #subprocess.call(["subscription-manager", "refresh"])
+    os.system("subscription-manager register")
+    os.system("subscription-manager refresh")
     os.system('subscription-manager list --available --all --matches="*Ceph*"')
     print("Please enter the pool ID for Ceph repos:")
-    pool_id = input()
+    pool_id = raw_input()
     cmd = "subscription-manager attach --pool="+pool_id
+    os.system(cmd)
+    os.system('bash subs.sh')
+
+    
     #if (ver == '2'):
      #   os.system("bash subs_2.sh")
     #elif (ver == '3'):
      #   os.system("bash subs_3.sh")
 
-    print(type(cmd))
 
 
 
 def firewall():
     print("Testing! firewall here")
-    #subprocess.call(["bash fire.sh"])
+    os.system("bash fire.sh")
 
-def pwdless_ssh():
-    no = input("Enter the number of hosts on which you want to deploy\n")
-    hosts = list()
-    print("Enter hostnames and their ip addresses in format : <ip> <hostname>")
-    for i in range(0,int(no)):
-        a = input()
-        hosts.append(a)
-    print(hosts)
-    
+def hosts():
+    mon_no = int(input('Enter number of mon nodes'))
+    mon = list()
+    print("Enter hostnames for mon : ")
+    file_hosts = open('/etc/ansible/hosts','a')
+    file_hosts.write("[mons]\n")
+    for i in range(0,mon_no):
+        a = raw_input()
+        mon.append(a)
+	file_hosts.write(mon[i]+"\n")
+    #print(mon) #prints mon hosts array
+    osd_no = int(input('Enter no of osd hosts : '))
+    osd = list()
+    file_hosts.write("[osds]\n")
+    print("Enter hostname for OSDs : ")
+    for i in range(0,osd_no):
+        a = raw_input()
+        osd.append(a)
+	file_hosts.write(osd[i]+"\n")
+    #print(osd)
+    mgr_no = int(input('Enter no of mgr hosts : '))
+    mgr = list()
+    file_hosts.write("[mgrs]\n")
+    print("Enter hostname for MGRs : ")
+    for i in range(0,mgr_no):
+        a = raw_input()
+        mgr.append(a)
+        file_hosts.write(mgr[i]+"\n")
+
 
 def auto_config():
     #configuring all.yml
-    pub_net = input("Enter public network ")
-    mon_interface = input("Enter monitor interface")
+    pub_net = raw_input("Enter public network ")
+    mon_interface = raw_input("Enter monitor interface ")
     admin_user = 'node'
     os.system('mkdir /home/node/ceph-ansible-keys')
     os.system('ln -s /usr/share/ceph-ansible/group_vars /etc/ansible/group_vars')
@@ -44,29 +67,37 @@ def auto_config():
     os.system('cp /usr/share/ceph-ansible/group_vars/osds.yml.sample /usr/share/ceph-ansible/group_vars/osds.yml')
     os.system('cp /usr/share/ceph-ansible/site.yml.sample /usr/share/ceph-ansible/site.yml')
     #all.yml config
-    file_all = open('testall.yml','a')
+    file_all = open('/usr/share/ceph-ansible/group_vars/all.yml','a')
     public_network = "\npublic_network: " + pub_net +"\n"
     monitor_interface = "\nmonitor_interface: " + mon_interface+"\n"
+    origin = "ceph_origin: repository\n"
+    repo = "ceph_repository: rhcs\n"
+    repo_type = "ceph_repository_type: cdn\n"
+    version = "ceph_rhcs_version: 3\n"
     file_all.write(public_network)
     file_all.write(monitor_interface)
-
+    file_all.write(origin)
+    file_all.write(repo)
+    file_all.write(repo_type)
+    file_all.write(version)
+    file_all.close()
     #osds.yml configuration
-    fosd = open('testosds.yml','a')
+    fosd = open('/usr/share/ceph-ansible/group_vars/osds.yml','a')
     fosd.write('\nosd_scenario: collocated \n')
     fosd.write('\nosd_auto_discovery: true \n')
     fosd.close()
-    mon_no = int(input('Enter number of mon nodes'))
-    mon = list()
-    print("Enter hostnames for mon")
-    for i in range(0,mon_no):
-        a = input()
-        mon.append(mon)
-    osd_no = int(input('Enter no of osd hosts'))
-    osd = list()
-    print("Enter hostname for OSDs")
-    for i in range(0,osd_no):
-        a = input()
-        osd.append(a)
+    #mon_no = int(input('Enter number of mon nodes'))
+    #mon = list()
+    #print("Enter hostnames for mon")
+    #for i in range(0,mon_no):
+     #   a = input()
+     #   mon.append(mon)
+    #osd_no = int(input('Enter no of osd hosts'))
+    #osd = list()
+    #print("Enter hostname for OSDs")
+    #for i in range(0,osd_no):
+     #   a = input()
+     #   osd.append(a)
 
 
 def main():
@@ -76,23 +107,42 @@ def main():
         print("-----Deploy Ceph-----")
         print("1. Firewall\n")
         print("2. Subscription\n")
-        print("3. Enabling password-less ssh")
+        print("3. Configuring hosts")
+	print("4. Auto config")
+	print("5. Run the playbook")
+        print("6. Purge the cluster")
         print("----------------------\n")
         inp = input("Enter your input:")
 
         if(inp == '0'):
             exit()
-        elif(inp == '1'):
+        elif(inp == 1):
             firewall()
-        elif(inp == '2'):
+        elif(inp == 2):
             #ver = input("Enter version of RHCS to install <2/3>")
             subscription()
-        elif(inp == '3'):
-            pwdless_ssh()
+            print("Subscription Added")
+	elif(inp == 4):
+	    print("Configuring Ceph")
+	    auto_config()
+	    print("Configuration done , Ready for deployment")
+        elif(inp == 3):
+            print("Configuring hosts")
+            hosts()
+	elif(inp == 5):
+            print("Enter the following commands to run the playbook")
+            print("cd /usr/share/ceph-ansible")
+            print("ansible-playbook site.yml -v[verbosity]"
+        elif(inp == 6):
+            print("Enter the following commands to purge the cluster successfully")
+            print("cd /usr/share/ceph-ansible")
+            print("ansible-playbook infrastructure-playbooks/purge-cluster.yml -v[verbosity]"
+            os.system('su - node')
+            print("operation ended")
+
         else:
             print("Enter correct input value")
 
 
 main()
-
 

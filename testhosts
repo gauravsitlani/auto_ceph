@@ -1,0 +1,9 @@
+[mons]
+host1
+[osds]
+h1
+h2
+h3
+[mgrs]
+host1
+
