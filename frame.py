@@ -2,7 +2,7 @@ import subprocess
 import os
 
 # The user should enable password-less ssh from the admin node
-def subscription(ver):
+def subscription():
     print("Adding a subscription ")
     #subprocess.call(["subscription-manager","register"])
     #subprocess.call(["subscription-manager", "refresh"])
@@ -10,10 +10,10 @@ def subscription(ver):
     print("Please enter the pool ID for Ceph repos:")
     pool_id = input()
     cmd = "subscription-manager attach --pool="+pool_id
-    if (ver == '2'):
-        os.system("bash subs_2.sh")
-    elif (ver == '3'):
-        os.system("bash subs_3.sh")
+    #if (ver == '2'):
+     #   os.system("bash subs_2.sh")
+    #elif (ver == '3'):
+     #   os.system("bash subs_3.sh")
 
     print(type(cmd))
 
@@ -85,8 +85,8 @@ def main():
         elif(inp == '1'):
             firewall()
         elif(inp == '2'):
-            ver = input("Enter version of RHCS to install <2/3>")
-            subscription(ver)
+            #ver = input("Enter version of RHCS to install <2/3>")
+            subscription()
         elif(inp == '3'):
             pwdless_ssh()
         else:
