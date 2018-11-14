@@ -1,4 +1,3 @@
-import subprocess
 import os
 
 # The user should enable password-less ssh from the admin node
@@ -130,19 +129,18 @@ def main():
             print("Configuring hosts")
             hosts()
 	elif(inp == 5):
-            print("Enter the following commands to run the playbook")
-            print("cd /usr/share/ceph-ansible")
-            print("ansible-playbook site.yml -v[verbosity]"
-        elif(inp == 6):
-            print("Enter the following commands to purge the cluster successfully")
-            print("cd /usr/share/ceph-ansible")
-            print("ansible-playbook infrastructure-playbooks/purge-cluster.yml -v[verbosity]"
+	    print("Run the following commands for running the playbook")
+	    print("\ncd /usr/share/ceph-ansible \n")
+	    print("ansible-playbook site.yml -v(verbosity)")
+	    os.system('su - node')
+	elif(inp == 6):
+            print("Run the following commands for pruging the cluster")
+            print("\ncd /usr/share/ceph-ansible \n")
+            print("ansible-playbook infrastructure-playbooks/purge-cluster.yml -v(verbosity)\n")
             os.system('su - node')
-            print("operation ended")
 
         else:
             print("Enter correct input value")
 
 
 main()
-
