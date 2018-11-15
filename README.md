@@ -1,5 +1,6 @@
 # auto_ceph
-Set of scripts to minimize admin intervention for Ceph installation
+Set of scripts to minimize admin intervention for Ceph installation.  
+Passwordless ssh is a pre-requisite for running this script.
 ## Instructions  
 Clone the repo and run the script using `python frame.py`
 The menu will be displayed, before running the deployment, steps 1 and 2 are compulsory which will configure firewall and subscription. Currently the script needs to be run on all host nodes for step 1 & 2 which can be further automated.  
