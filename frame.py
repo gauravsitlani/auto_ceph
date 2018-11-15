@@ -23,7 +23,7 @@ def subscription():
 
 def firewall():
     print("Testing! firewall here")
-    os.system("bash fire.sh")
+    os.system("bash /usr/share/ceph-ansible/scripts/auto_ceph/fire.sh")
 
 def hosts():
     mon_no = int(input('Enter number of mon nodes'))
@@ -129,16 +129,17 @@ def main():
             print("Configuring hosts")
             hosts()
 	elif(inp == 5):
-	    print("Run the following commands for running the playbook")
-	    print("\ncd /usr/share/ceph-ansible \n")
-	    print("ansible-playbook site.yml -v(verbosity)")
-	    os.system('su - node')
+	    #print("Run the following commands for running the playbook")
+	    #print("\ncd /usr/share/ceph-ansible \n")
+	    #print("ansible-playbook site.yml -v(verbosity)")
+	    #os.system('su - node')
+	    os.system('su node -c "bash test.sh"')
 	elif(inp == 6):
             print("Run the following commands for pruging the cluster")
             print("\ncd /usr/share/ceph-ansible \n")
             print("ansible-playbook infrastructure-playbooks/purge-cluster.yml -v(verbosity)\n")
-            os.system('su - node')
-
+            os.system('su node -c "bash purge.sh"')
+	    
         else:
             print("Enter correct input value")
 
