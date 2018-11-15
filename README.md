@@ -17,4 +17,4 @@ The menu will be displayed, before running the deployment, steps 1 and 2 are com
   
 Enter your input:  
 ```  
-By default for this deployment we are considering osd_scenario : collocated and auto_discovery: true and the hostname for the admin user as `node` which can be changed to something else.  
+By default for this deployment we are considering `osd_scenario : collocated` and `osd_auto_discovery: true` and the hostname for the admin user as `node` which can be changed to something else.  
