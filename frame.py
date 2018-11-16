@@ -23,7 +23,7 @@ def subscription():
 
 def firewall():
     print("Testing! firewall here")
-    os.system("bash /usr/share/ceph-ansible/scripts/auto_ceph/fire.sh")
+    os.system("bash fire.sh")
 
 def hosts():
     mon_no = int(input('Enter number of mon nodes'))
