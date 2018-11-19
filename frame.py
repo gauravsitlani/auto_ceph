@@ -23,7 +23,7 @@ def subscription():
 
 def firewall():
     print("Testing! firewall here")
-    os.system("bash fire.sh")
+    os.system("bash /usr/share/ceph-ansible/scripts/auto_ceph/fire.sh")
 
 def hosts():
     mon_no = int(input('Enter number of mon nodes'))
@@ -111,7 +111,8 @@ def main():
 	print("5. Run the playbook")
         print("6. Purge the cluster")
         print("----------------------\n")
-        inp = input("Enter your input:")
+	print("-----For exit , Enter 0 and press enter ---------\n")
+        inp = input("Enter your input : ")
 
         if(inp == '0'):
             exit()
