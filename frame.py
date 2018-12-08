@@ -1,16 +1,65 @@
 import os
+import getpass
+import re
 
 # The user should enable password-less ssh from the admin node
 def subscription():
-    print("Adding a subscription ")
-    os.system("subscription-manager register")
-    os.system("subscription-manager refresh")
-    os.system('subscription-manager list --available --all --matches="*Ceph*"')
+    #print("Adding a subscription ")
+    #os.system("subscription-manager register")
+    #os.system("subscription-manager refresh")
+    #os.system('subscription-manager list --available --all --matches="*Ceph*"')
+    username = raw_input("Enter username for subscription-manager")
+    passwrd = getpass.getpass(prompt='Enter password for subscription manager')
     print("Please enter the pool ID for Ceph repos:")
     pool_id = raw_input()
-    cmd = "subscription-manager attach --pool="+pool_id
-    os.system(cmd)
-    os.system('bash subs.sh')
+    attach_pool = "sudo subscription-manager attach --pool="+pool_id
+    #Commands
+    register = "sudo subscription-manager register --username="+username+" --password="+passwrd
+    refresh = "sudo subscription-manager refresh"
+    subs_disable = "sudo subscription-manager repos --disable=*"
+    enable_repo1 = "sudo subscription-manager repos --enable=rhel-7-server-rpms"
+    enable_repo2 = "sudo subscription-manager repos --enable=rhel-7-server-extras-rpms"
+    yum_update = "sudo yum update -y"
+    install1 = "sudo yum install yum-utils vim -y"
+    install2 = "sudo yum install bash-completion -y"
+    enable_repo3 = "sudo subscription-manager repos --enable=rhel-7-server-rhceph-3-mon-rpms"
+    enable_repo4 = "sudo subscription-manager repos --enable=rhel-7-server-rhceph-3-osd-rpms"
+    enable_repo5 = "sudo subscription-manager repos --enable=rhel-7-server-rhceph-3-tools-rpms"
+    enable_repo6 = "sudo subscription-manager repos --enable=rhel-7-server-ansible-2.4-rpms"
+    install3 = "sudo yum install ceph-ansible -y"
+    hosts_exp = re.compile('[a-z]+')
+    brack = re.compile('^\[')
+    hsh = re.compile('^#')
+    letters = re.compile('[a-z0-9]+')
+    hosts = list()
+    with open('hosts', 'r') as fobj:
+            a = fobj.readlines()
+    for i in range(0,len(a)):
+         if(brack.match(a[i]) or hsh.match(a[i])):
+             continue
+         else:
+             lt = a[i].split('\n')
+             hosts.append(lt[0])
+    hosts = list(set(hosts))
+    for i in range(0,len(hosts)):
+        if(letters.match(hosts[i])):
+            os.system('ssh '+hosts[i]+' sudo systemctl disable firewalld')
+            os.system('ssh '+hosts[i]+' sudo systemctl stop firewalld')
+            os.system('ssh '+hosts[i]+' '+register)
+            os.system('ssh '+hosts[i]+' '+refresh)
+            os.system('ssh '+hosts[i]+' '+subs_disable)
+            os.system('ssh '+hosts[i]+' '+enable_repo1)
+            os.system('ssh '+hosts[i]+' '+enable_repo2)
+            os.system('ssh '+hosts[i]+' '+yum_update)
+            os.system('ssh '+hosts[i]+' '+install1)
+            os.system('ssh '+hosts[i]+' '+install2)
+            os.system('ssh '+hosts[i]+' '+enable_repo3)
+            os.system('ssh '+hosts[i]+' '+enable_repo4)
+            os.system('ssh '+hosts[i]+' '+enable_repo5)
+
+    #disable firewalld and adding subscription
+    #os.system(cmd)
+    #os.system('bash subs.sh')
 
     
     #if (ver == '2'):
@@ -23,7 +72,6 @@ def subscription():
 
 def firewall():
     print("Testing! firewall here")
-    os.system("bash /usr/share/ceph-ansible/scripts/auto_ceph/fire.sh")
 
 def hosts():
     mon_no = int(input('Enter number of mon nodes'))

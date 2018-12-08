@@ -1,0 +1,8 @@
+[mons]
+ceph-node1
+[osds]
+ceph-node1
+ceph-node2
+ceph-node3
+[mgrs]
+ceph-node1
